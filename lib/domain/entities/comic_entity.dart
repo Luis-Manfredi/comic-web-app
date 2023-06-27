@@ -6,6 +6,7 @@ class ComicEntity {
   List? characters;
   List? teams;
   List? locations;
+  List? concepts;
 
   ComicEntity({
     required this.title,
@@ -14,28 +15,31 @@ class ComicEntity {
     this.imageURL,
     this.characters,
     this.teams,
-    this.locations
+    this.locations,
+    this.concepts
   });
 
   // Convert to map
   Map<String, dynamic> toMap() => {
-    'title': title,
-    'date': date,
-    'imageURL': imageURL,
-    'issueNumber': issueNumber,
-    'characters': characters,
-    'teams': teams,
-    'locations': locations
+    'name': title,
+    'date_added': date,
+    'original_url': imageURL,
+    'issue_number': issueNumber,
+    'character_credits': characters,
+    'team_credits': teams,
+    'location_credits': locations,
+    'concept_credits': concepts
   };
 
   // Map to Object
   factory ComicEntity.fromMap(Map<String, dynamic> map) => ComicEntity(
-    title: map['name'],
-    issueNumber: map['issue_number'], 
-    date: map['date_added'],
-    imageURL: map['image.original_url'] ?? '',
-    characters: map['character_credits'] ?? [],
-    teams: map['team_credits'] ?? [],
-    locations: map['location_credits'] ?? []
+    title: map['results']['name'],
+    issueNumber: map['results']['issue_number'], 
+    date: map['results']['date_added'],
+    imageURL: map['results']['image']['original_url'] ?? '',
+    characters: map['results']['character_credits'] ?? [],
+    teams: map['results']['team_credits'] ?? [],
+    locations: map['results']['location_credits'] ?? [],
+    concepts: map['results']['concept_credits'] ?? []
   );
 }

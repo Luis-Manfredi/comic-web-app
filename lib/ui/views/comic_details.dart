@@ -39,41 +39,68 @@ class ComicDetails extends StatelessWidget {
               
                     Row(
                       children: [
-                        const Expanded(
+                        Expanded(
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Characters', 
-                                style: TextStyle(
-                                  fontSize: 20, 
-                                  fontWeight: FontWeight.bold
-                                )
-                              ),
-                              const Divider(),
-                              
-                              Text('Teams', 
-                                style: TextStyle(
-                                  fontSize: 20, 
-                                  fontWeight: FontWeight.bold
-                                )
-                              ),
-                              const Divider(),
+                              buildLabels('Characters'),
 
-                              Text('Locations', 
-                                style: TextStyle(
-                                  fontSize: 20, 
-                                  fontWeight: FontWeight.bold
-                                )
-                              ),
-                              const Divider(), 
+                              comic.characters == null || comic.characters!.isEmpty 
+                                ? const NoDataWidget()
+                                : GridView.builder(
+                                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2
+                                  ), 
+                                  itemBuilder: (context, index) {
+                                    var item = comic.characters![index];
 
-                              Text('Concepts', 
-                                style: TextStyle(
-                                  fontSize: 20, 
-                                  fontWeight: FontWeight.bold
-                                )
-                              ),
-                              const Divider(),                   
+                                    return Text(item['name']);
+                                  },
+                                ),
+
+                              buildLabels('Teams'),
+
+                              comic.teams == null || comic.characters!.isEmpty 
+                                ? const NoDataWidget()
+                                : GridView.builder(
+                                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2
+                                  ), 
+                                  itemBuilder: (context, index) {
+                                    var item = comic.teams![index];
+
+                                    return Text(item['name']);
+                                  },
+                                ),
+
+                              buildLabels('Locations'),
+
+                              comic.locations == null || comic.characters!.isEmpty 
+                                ? const NoDataWidget()
+                                : GridView.builder(
+                                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2
+                                  ), 
+                                  itemBuilder: (context, index) {
+                                    var item = comic.locations![index];
+
+                                    return Text(item['name']);
+                                  },
+                                ),
+
+                              buildLabels('Concepts'),
+
+                              comic.concepts == null || comic.characters!.isEmpty 
+                                ? const NoDataWidget()
+                                : GridView.builder(
+                                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2
+                                  ), 
+                                  itemBuilder: (context, index) {
+                                    var item = comic.concepts![index];
+
+                                    return Text(item['name']);
+                                  },
+                                ),                
                             ],
                           ),
                         ),
@@ -98,14 +125,141 @@ class ComicDetails extends StatelessWidget {
               ),
             );
           } else {
-            return Column(
-              children: [
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  const SizedBox(height: 20),
+                
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      IconButton(
+                        onPressed: () => Navigator.pop(context), 
+                        icon: const Icon(Icons.arrow_back_ios_new_rounded)
+                      ),
+                      const Text('ComicBook', style: TextStyle(fontSize: 42)),
+                      IconButton(
+                        onPressed: null, 
+                        icon: Container()
+                      )
+                    ],
+                  ),
+                      
+                  const SizedBox(height: 40),
+            
+                  Container(
+                    height: 500,
+                    decoration: BoxDecoration(
+                      color: Colors.grey,
+                      borderRadius: BorderRadius.circular(3),
+                      image: comic.imageURL != null 
+                        ? DecorationImage(image: NetworkImage(comic.imageURL!))
+                        : null
+                    ),
+                  ),
 
-              ],
+                  const SizedBox(height: 40),
+
+                  Column(
+                    children: [
+                      buildLabels('Characters'),
+
+                      comic.characters == null || comic.characters!.isEmpty 
+                        ? const NoDataWidget()
+                        : GridView.builder(
+                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2
+                          ), 
+                          itemBuilder: (context, index) {
+                            var item = comic.characters![index];
+
+                            return Text(item['name']);
+                          },
+                        ),
+
+                      buildLabels('Teams'),
+
+                      comic.teams == null || comic.characters!.isEmpty 
+                        ? const NoDataWidget()
+                        : GridView.builder(
+                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2
+                          ), 
+                          itemBuilder: (context, index) {
+                            var item = comic.teams![index];
+
+                            return Text(item['name']);
+                          },
+                        ),
+
+                      buildLabels('Locations'),
+
+                      comic.locations == null || comic.characters!.isEmpty 
+                        ? const NoDataWidget()
+                        : GridView.builder(
+                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2
+                          ), 
+                          itemBuilder: (context, index) {
+                            var item = comic.locations![index];
+
+                            return Text(item['name']);
+                          },
+                        ),
+
+                      buildLabels('Concepts'),
+
+                      comic.concepts == null || comic.characters!.isEmpty 
+                        ? const NoDataWidget()
+                        : GridView.builder(
+                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2
+                          ), 
+                          itemBuilder: (context, index) {
+                            var item = comic.concepts![index];
+
+                            return Text(item['name']);
+                          },
+                        ),                
+                    ],
+                  )
+                ],
+              ),
             );
           }
         },
       ),
+    );
+  }
+
+  Widget buildLabels(String label) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, 
+          style: const TextStyle(
+            fontSize: 20, 
+            fontWeight: FontWeight.bold
+          )
+        ),
+        const Divider(), 
+      ],
+    );
+  }
+}
+
+class NoDataWidget extends StatelessWidget {
+  const NoDataWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 100,
+      alignment: Alignment.center,
+      child: const Text('No data', 
+        style: TextStyle(fontSize: 20, color: Colors.black54)),  
     );
   }
 }
