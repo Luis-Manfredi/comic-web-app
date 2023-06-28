@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../../data/local/demo_list.dart';
+// import '../../data/local/demo_list.dart';
+import '../../data/remote/api_remote.dart';
+import '../../data/repository/comics_repo_impl.dart';
 import '../../domain/entities/comic_entity.dart';
+import '../../domain/usecases/get_comics_list.dart';
 import '../utils/app_theme.dart';
 import '../widgets/custom_grid_tile.dart';
 import '../widgets/custom_list_tile.dart';
@@ -16,12 +19,19 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   bool isGrid = true;
-  List<ComicEntity> comics = Demo.demoList;
+  // List<ComicEntity> comics = Demo.demoList;
   final _controller = ScrollController();
+  List<ComicEntity> comics = [];
+
+  Future setComicsList() async {
+    comics = await APIRemoteImplementation().getComics();
+  }
 
   @override
   void initState() {
     super.initState();
+    // setup comics list
+    setComicsList();
   }
 
   @override
@@ -109,53 +119,69 @@ class _HomePageState extends State<HomePage> {
               const Divider(),
         
               const SizedBox(height: 40),
+
+              StreamBuilder(
+                // Execute usecase
+                stream: Stream.fromFuture(GetComicsList(ComicsListRepoImplementation(APIRemoteImplementation())).execute()),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return isGrid 
+                      ? GridView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          padding: const EdgeInsets.all(20),
+                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 4,
+                            mainAxisSpacing: 20,
+                            crossAxisSpacing: 10,
+                            mainAxisExtent: 380
+                          ), 
+                          itemCount: comics.length,
+                          itemBuilder: (context, index) {
+                            var item = comics[index];
+                        
+                            return CustomGridTile(
+                              item: item, 
+                              onTap: () => Navigator.push(
+                                context, MaterialPageRoute(
+                                  builder: (context) => ComicDetails(comic: item)
+                                )
+                              )
+                            );
+                          },
+                        )
+                  : ListView.separated(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        var item = comics[index];
+
+                        return CustomListTile(
+                          item: item, 
+                          onTap: () => Navigator.push(
+                            context, MaterialPageRoute(
+                              builder: (context) => ComicDetails(comic: item)
+                            )
+                          )
+                        );
+                      }, 
+                      separatorBuilder: (context, index) => const Divider(), 
+                      itemCount: comics.length
+                    );
+                  } else if (snapshot.hasError) {
+                    return const Center(
+                      child: Text('No Data. Load Again.', style: TextStyle(fontSize: 24, color: Colors.black54)),
+                    );
+                  } else {
+                    return const Center(
+                      child: CircularProgressIndicator(color: AppTheme.primaryColor),
+                    );
+                  }
+                }
+              ),
         
               // Change to Grid layout if isGrid is true otherwise set view to List
-              if (isGrid) ... [
-                GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  padding: const EdgeInsets.all(20),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 4,
-                    mainAxisSpacing: 20,
-                    crossAxisSpacing: 10,
-                    mainAxisExtent: 380
-                  ), 
-                  itemCount: comics.length,
-                  itemBuilder: (context, index) {
-                    var item = comics[index];
-                
-                    return CustomGridTile(
-                      item: item, 
-                      onTap: () => Navigator.push(
-                        context, MaterialPageRoute(
-                          builder: (context) => ComicDetails(comic: item)
-                        )
-                      )
-                    );
-                  },
-                )
-              ] else ... [
-                ListView.separated(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemBuilder: (context, index) {
-                    var item = comics[index];
-
-                    return CustomListTile(
-                      item: item, 
-                      onTap: () => Navigator.push(
-                        context, MaterialPageRoute(
-                          builder: (context) => ComicDetails(comic: item)
-                        )
-                      )
-                    );
-                  }, 
-                  separatorBuilder: (context, index) => const Divider(), 
-                  itemCount: comics.length
-                )
-              ]
+              
             ],
           ),
         ),

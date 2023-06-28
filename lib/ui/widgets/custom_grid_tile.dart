@@ -40,7 +40,9 @@ class CustomGridTile extends StatelessWidget {
                 fontWeight: FontWeight.bold, 
                 fontSize: 16,
                 color: Colors.black
-              )
+              ),
+              maxLines: 4,
+              overflow: TextOverflow.ellipsis,
             ),
     
             const SizedBox(height: 30),

@@ -1,7 +1,7 @@
 class ComicEntity {
   String title;
   String date;
-  String? issueNumber;
+  String issueNumber;
   String? imageURL;
   List? characters;
   List? teams;
@@ -33,13 +33,13 @@ class ComicEntity {
 
   // Map to Object
   factory ComicEntity.fromMap(Map<String, dynamic> map) => ComicEntity(
-    title: map['results']['name'],
-    issueNumber: map['results']['issue_number'], 
-    date: map['results']['date_added'],
-    imageURL: map['results']['image']['original_url'] ?? '',
-    characters: map['results']['character_credits'] ?? [],
-    teams: map['results']['team_credits'] ?? [],
-    locations: map['results']['location_credits'] ?? [],
-    concepts: map['results']['concept_credits'] ?? []
+    title: map['name'] ?? map['volume']['name'],
+    issueNumber: map['issue_number'] ?? '', 
+    date: map['date_added'] ?? '',
+    imageURL: map['image']['original_url'] ?? '',
+    characters: map['character_credits'] ?? [],
+    teams: map['team_credits'] ?? [],
+    locations: map['location_credits'] ?? [],
+    concepts: map['concept_credits'] ?? []
   );
 }
