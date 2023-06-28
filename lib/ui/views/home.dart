@@ -266,52 +266,87 @@ class _HomePageState extends State<HomePage> {
     
           const SizedBox(height: 40),
     
-          // Change to Grid layout if isGrid is true otherwise set view to List
-          if (isGrid) ... [
-            GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              padding: const EdgeInsets.all(20),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                mainAxisSpacing: 20,
-                crossAxisSpacing: 10,
-                mainAxisExtent: 380
-              ), 
-              itemCount: comics.length,
-              itemBuilder: (context, index) {
-                var item = comics[index];
-            
-                return CustomGridTile(
-                  item: item, 
-                  onTap: () => Navigator.push(
-                    context, MaterialPageRoute(
-                      builder: (context) => ComicDetails(comic: item)
-                    )
-                  )
-                );
-              },
-            )
-          ] else ... [
-            ListView.separated(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemBuilder: (context, index) {
-                var item = comics[index];
+          
+          StreamBuilder(
+            // Execute usecase
+            stream: Stream.fromFuture(GetComicsList(ComicsListRepoImplementation(APIRemoteImplementation())).execute()),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return isGrid 
+                  ? GridView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      padding: const EdgeInsets.all(20),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        mainAxisSpacing: 20,
+                        crossAxisSpacing: 0,
+                        mainAxisExtent: 380
+                      ), 
+                      itemCount: comics.length,
+                      itemBuilder: (context, index) {
+                        var item = comics[index];
+                    
+                        return CustomGridTile(
+                          item: item, 
+                          onTap: () async {
+                            showDialog(
+                              context: context, 
+                              builder: (context) => const Center(
+                                child: CircularProgressIndicator(
+                                  color: AppTheme.primaryColor
+                                )
+                              )
+                            );
 
-                return CustomListTile(
-                  item: item, 
-                  onTap: () => Navigator.push(
-                    context, MaterialPageRoute(
-                      builder: (context) => ComicDetails(comic: item)
+                            var comic = await APIRemoteImplementation().getComicDetails(item.detailsURL);
+
+                            if (mounted) {
+                              Navigator.pop(context);
+                              Navigator.push(
+                                context, MaterialPageRoute(
+                                  builder: (context) => ComicDetails(comic: comic)
+                                )
+                              );
+                            }  
+                          }
+                        );
+                      },
                     )
-                  )
+              : ListView.separated(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    var item = comics[index];
+
+                    return CustomListTile(
+                      item: item, 
+                      onTap: () => Navigator.push(
+                        context, MaterialPageRoute(
+                          builder: (context) => ComicDetails(comic: item)
+                        )
+                      )
+                    );
+                  }, 
+                  separatorBuilder: (context, index) => const Divider(), 
+                  itemCount: comics.length
                 );
-              }, 
-              separatorBuilder: (context, index) => const Divider(), 
-              itemCount: comics.length
-            )
-          ]
+              } else if (snapshot.hasError) {
+                return const Center(
+                  child: Text('No Data. Load Again.', style: TextStyle(fontSize: 24, color: Colors.black54)),
+                );
+              } else {
+                return Column(
+                  children: [
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.3,
+                    ),
+                    const CircularProgressIndicator(color: AppTheme.primaryColor)
+                  ],
+                );
+              }
+            }
+          ),
         ],
       ),
     );
@@ -363,23 +398,44 @@ class _HomePageState extends State<HomePage> {
     
           const SizedBox(height: 40),
     
-          ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemBuilder: (context, index) {
-              var item = comics[index];
+          StreamBuilder(
+            // Execute usecase
+            stream: Stream.fromFuture(GetComicsList(ComicsListRepoImplementation(APIRemoteImplementation())).execute()),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return ListView.separated(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    var item = comics[index];
 
-              return CustomListTile(
-                item: item, 
-                onTap: () => Navigator.push(
-                  context, MaterialPageRoute(
-                    builder: (context) => ComicDetails(comic: item)
-                  )
-                )
-              );
-            }, 
-            separatorBuilder: (context, index) => const Divider(), 
-            itemCount: comics.length
+                    return CustomListTile(
+                      item: item, 
+                      onTap: () => Navigator.push(
+                        context, MaterialPageRoute(
+                          builder: (context) => ComicDetails(comic: item)
+                        )
+                      )
+                    );
+                  }, 
+                  separatorBuilder: (context, index) => const Divider(), 
+                  itemCount: comics.length
+                );
+              } else if (snapshot.hasError) {
+                return const Center(
+                  child: Text('No Data. Load Again.', style: TextStyle(fontSize: 24, color: Colors.black54)),
+                );
+              } else {
+                return Column(
+                  children: [
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.3,
+                    ),
+                    const CircularProgressIndicator(color: AppTheme.primaryColor)
+                  ],
+                );
+              }
+            }
           )
         ],
       ),
