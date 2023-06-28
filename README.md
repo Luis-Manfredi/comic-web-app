@@ -7,7 +7,7 @@ A Demo Flutter project.
 Before you run the app, you must setup an enviromental variable
 where you can store your Comic Vine API key. To create this enviromental
 variable you can follow the instructions in the documentation:
-#https://pub.dev/packages/flutter_dotenv
+https://pub.dev/packages/flutter_dotenv
 
 
 ## Run the App
