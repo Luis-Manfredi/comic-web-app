@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../domain/entities/comic_entity.dart';
+import '../constants/date.dart';
 
 class CustomGridTile extends StatelessWidget {
   const CustomGridTile({
@@ -14,6 +15,8 @@ class CustomGridTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    DateTime date = DateTime.parse(item.date);
+
     return InkWell(
       borderRadius: BorderRadius.circular(3),
       onTap: onTap,
@@ -47,7 +50,7 @@ class CustomGridTile extends StatelessWidget {
     
             const SizedBox(height: 30),
     
-            Text(item.date,
+            Text('${DateConstants.months[date.month-1]} ${date.day}, ${date.year}',
               textAlign: TextAlign.center, 
                 style: const TextStyle(
                 color: Colors.black54, 
