@@ -7,6 +7,7 @@ import '../../ui/utils/api_utils.dart';
 
 abstract class APIRemoteDataSource {
   Future<List<ComicEntity>> getComics();
+  Future<ComicEntity> getComicDetails(String apiDetailUrl);
 }
 
 class APIRemoteImplementation extends APIRemoteDataSource {
@@ -30,19 +31,36 @@ class APIRemoteImplementation extends APIRemoteDataSource {
 
       final comics = issues.map((item) => ComicEntity.fromMap(item)).toList();
 
-      print(comics[0].title);
-      print(comics[0].date);
-      print(comics[0].issueNumber);
-      print(comics[0].imageURL);
-      // print(comics[0].characters);
-      // print(comics[0].teams);
-      // print(comics[0].locations);
-      // print(comics[0].concepts);
-
       return comics;
     } catch (e) {
       print(e);
-      return comics;
+      throw Exception(e);
+    }
+  }
+  
+  @override
+  Future<ComicEntity> getComicDetails(String apiDetailUrl) async {
+    final apiKey = APIUtils.apiKey;
+    final url = '$apiDetailUrl?api_key=$apiKey&format=json';
+    final uri = Uri.parse(url);
+
+    try {
+      final response = await http.get(uri, headers: {
+        'Content-type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+      });
+
+      final Map<String, dynamic> data = jsonDecode(response.body);
+      final issue = data['results'];
+
+      final comic = ComicEntity.fromMap(issue);
+
+      print(comic.toMap());
+
+      return comic;
+    } catch (e) {
+      print(url);
+      throw Exception(e);
     }
   }
 }

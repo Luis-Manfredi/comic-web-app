@@ -142,11 +142,27 @@ class _HomePageState extends State<HomePage> {
                         
                             return CustomGridTile(
                               item: item, 
-                              onTap: () => Navigator.push(
-                                context, MaterialPageRoute(
-                                  builder: (context) => ComicDetails(comic: item)
-                                )
-                              )
+                              onTap: () async {
+                                showDialog(
+                                  context: context, 
+                                  builder: (context) => const Center(
+                                    child: CircularProgressIndicator(
+                                      color: AppTheme.primaryColor
+                                    )
+                                  )
+                                );
+
+                                var comic = await APIRemoteImplementation().getComicDetails(item.detailsURL);
+
+                                if (mounted) {
+                                  Navigator.pop(context);
+                                  Navigator.push(
+                                    context, MaterialPageRoute(
+                                      builder: (context) => ComicDetails(comic: comic)
+                                    )
+                                  );
+                                }  
+                              }
                             );
                           },
                         )
@@ -173,15 +189,17 @@ class _HomePageState extends State<HomePage> {
                       child: Text('No Data. Load Again.', style: TextStyle(fontSize: 24, color: Colors.black54)),
                     );
                   } else {
-                    return const Center(
-                      child: CircularProgressIndicator(color: AppTheme.primaryColor),
+                    return Column(
+                      children: [
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.3,
+                        ),
+                        const CircularProgressIndicator(color: AppTheme.primaryColor)
+                      ],
                     );
                   }
                 }
-              ),
-        
-              // Change to Grid layout if isGrid is true otherwise set view to List
-              
+              ),              
             ],
           ),
         ),

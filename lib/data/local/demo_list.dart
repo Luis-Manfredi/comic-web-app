@@ -6,42 +6,50 @@ class Demo {
     ComicEntity(
       title: 'Dummy title', 
       date: 'June 6, 2023', 
-      issueNumber: '#1'
+      issueNumber: '#1', 
+      detailsURL: ''
     ),
     ComicEntity(
       title: 'Dummy title', 
       date: 'June 6, 2023', 
-      issueNumber: '#2'
+      issueNumber: '#2', 
+      detailsURL: ''
     ),
     ComicEntity(
       title: 'Dummy title', 
       date: 'June 6, 2023', 
-      issueNumber: '#3'
+      issueNumber: '#3', 
+      detailsURL: ''
     ),
     ComicEntity(
       title: 'Dummy title', 
       date: 'June 6, 2023', 
-      issueNumber: '#4'
+      issueNumber: '#4', 
+      detailsURL: ''
     ),
     ComicEntity(
       title: 'Dummy title', 
       date: 'June 6, 2023', 
-      issueNumber: '#5'
+      issueNumber: '#5', 
+      detailsURL: ''
     ),
     ComicEntity(
       title: 'Dummy title', 
       date: 'June 6, 2023', 
-      issueNumber: '#6'
+      issueNumber: '#6', 
+      detailsURL: ''
     ),
     ComicEntity(
       title: 'Dummy title', 
       date: 'June 6, 2023', 
-      issueNumber: '#7'
+      issueNumber: '#7', 
+      detailsURL: ''
     ),
     ComicEntity(
       title: 'Dummy title', 
       date: 'June 6, 2023', 
-      issueNumber: '#8'
+      issueNumber: '#8', 
+      detailsURL: ''
     ),
   ];
 }
