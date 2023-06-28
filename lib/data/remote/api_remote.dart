@@ -33,7 +33,6 @@ class APIRemoteImplementation extends APIRemoteDataSource {
 
       return comics;
     } catch (e) {
-      print(e);
       throw Exception(e);
     }
   }
@@ -55,11 +54,8 @@ class APIRemoteImplementation extends APIRemoteDataSource {
 
       final comic = ComicEntity.fromMap(issue);
 
-      print(comic.toMap());
-
       return comic;
     } catch (e) {
-      print(url);
       throw Exception(e);
     }
   }
